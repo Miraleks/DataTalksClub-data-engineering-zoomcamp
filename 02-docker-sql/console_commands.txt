@@ -8,8 +8,8 @@
 docker run -it \
     -e POSTGRES_USER="root" \
     -e POSTGRES_PASSWORD="root" \
-    -e POSTRES_DB="ny_taxi" \
-    -v C:\Projects\DataTalksClub-data-engineering-zoomcamp\02-docker-sql\ny_taxi_postgresql_data:/var/lib/postgresql/data \
+    -e POSTGRES_DB="ny_taxi" \
+    -v F:\Projects\DataTalksClub-data-engineering-zoomcamp\02-docker-sql\ny_taxi_postgresql_data:/var/lib/postgresql/data \
     -p 5432:5432 \
     postgres:13
 
@@ -18,3 +18,12 @@ pgcli -h localhost -p 5432 -u root -d ny_taxi  #when you run it, you will have a
 
 # run jupyter notebook, but it is a not necessary
 jupyter notebook
+
+# in Linux you can use this command to see first x lines of csv file
+head -n x file_name.csv
+
+# for saving this lines inside another csv file:
+head -n x file_name.csv > new_file.csv
+
+#count of lines in csv file
+wc -l
