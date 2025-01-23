@@ -1,0 +1,20 @@
+# use this command for create container with postgresql
+# keys:
+# -e  enviroment
+# -v  volume
+# -p  port
+
+# docker container initialize line
+docker run -it \
+    -e POSTGRES_USER="root" \
+    -e POSTGRES_PASSWORD="root" \
+    -e POSTRES_DB="ny_taxi" \
+    -v C:\Projects\DataTalksClub-data-engineering-zoomcamp\02-docker-sql\ny_taxi_postgresql_data:/var/lib/postgresql/data \
+    -p 5432:5432 \
+    postgres:13
+
+# access to postgresql inside container with pgcli (check install before)
+pgcli -h localhost -p 5432 -u root -d ny_taxi  #when you run it, you will have a prompt for password input
+
+# run jupyter notebook, but it is a not necessary
+jupyter notebook

@@ -1,0 +1,3 @@
+# It's a list of common used commands inside pgcli console
+
+\dt  - list of tables
