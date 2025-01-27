@@ -4,14 +4,27 @@
 # -v  volume
 # -p  port
 
-# docker container initialize line
+
+
+# docker container initialize line (path in Linux)
 docker run -it \
     -e POSTGRES_USER="root" \
     -e POSTGRES_PASSWORD="root" \
     -e POSTGRES_DB="ny_taxi" \
-    -v F:\Projects\DataTalksClub-data-engineering-zoomcamp\02-docker-sql\ny_taxi_postgresql_data:/var/lib/postgresql/data \
+    -v /mnt/f/Projects/DataTalksClub-data-engineering-zoomcamp/02-docker-sql/ny_taxi_postgresql_data:/var/lib/postgresql/data \
     -p 5432:5432 \
     postgres:13
+
+docker run -it -e POSTGRES_USER="root" -e POSTGRES_PASSWORD="root" -e POSTGRES_DB="ny_taxi" -v F:\Projects\DataTalksClub-data-engineering-zoomcamp\02-docker-sql\ny_taxi_postgresql_data:/var/lib/postgresql/data -p 5432:5432 postgres:13
+
+# docker container with PGADMIN
+docker run -it \
+    -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" \
+    -e PGADMIN_DEFAULT_PASSWORD="root" \
+    -p 8080:80 \
+    dpage/pgadmin4
+
+docker run -it -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" -e PGADMIN_DEFAULT_PASSWORD="root" -p 8080:80 dpage/pgadmin4
 
 # access to postgresql inside container with pgcli (check install before)
 pgcli -h localhost -p 5432 -u root -d ny_taxi  #when you run it, you will have a prompt for password input
@@ -27,3 +40,60 @@ head -n x file_name.csv > new_file.csv
 
 #count of lines in csv file
 wc -l
+
+#  NETWORK BETWEEN CONTAINERS
+# create a network for docker containers
+docker network create pg-network
+
+docker run -it \
+    -e POSTGRES_USER="root" \
+    -e POSTGRES_PASSWORD="root" \
+    -e POSTGRES_DB="ny_taxi" \
+    -v /mnt/f/Projects/DataTalksClub-data-engineering-zoomcamp/02-docker-sql/ny_taxi_postgresql_data:/var/lib/postgresql/data \
+    -p 5432:5432 \
+    --network=pg-network \
+    --name pg-database \
+    postgres:13
+
+docker run -it \
+    -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" \
+    -e PGADMIN_DEFAULT_PASSWORD="root" \
+    -p 8080:80 \
+    --network=pg-network \
+    --name pgadmin \
+    dpage/pgadmin4
+
+
+# command for running script ingest_data
+URL = "https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_2021-01.parquet"
+
+python ingest_data.py \
+    --user=root \
+    --password=root \
+    --host=localhost \
+    --port=5432 \
+    --db=ny_taxi \
+    --table_name=yellow_taxi_trips \
+    --url=${URL}
+
+docker build -t taxi_data_loading:v001
+
+docker run -it \
+    --network=pg-network \
+    taxi_data_loading:v002 \
+        --user=root \
+        --password=root \
+        --host=pg-database \
+        --port=5432 \
+        --db=ny_taxi \
+        --tb=yellow_taxi_trips \
+        --url=${URL}
+
+
+python -m http.server
+
+ipconfig
+
+URL="http://172.26.32.1:8000/data/yellow_tripdata_2021-01.parquet"
+
+
