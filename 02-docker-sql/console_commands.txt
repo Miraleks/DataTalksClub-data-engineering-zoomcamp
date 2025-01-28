@@ -94,7 +94,7 @@ python -m http.server
 
 ipconfig
 
-URL="http://172.26.32.1:8000/data/yellow_tripdata_2021-01.parquet"
+URL="http://172.28.240.1:8000/data/yellow_tripdata_2021-01.parquet"
 
 docker-compose up -d
 docker-compose down

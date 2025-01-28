@@ -8,4 +8,3 @@ def unzip_gz_file(input_file):
         with open(output_file, 'wb') as f_out:
             shutil.copyfileobj(f_in, f_out)
     return output_file
-
