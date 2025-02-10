@@ -9,17 +9,14 @@ terraform {
 }
 
 provider "google" {
-# Credentials only needs to be set if you do not have the GOOGLE_APPLICATION_CREDENTIALS set
-#  credentials =
-  project = "<Your Project ID>"
-  region  = "us-central1"
+  credentials = file("./keys/my-creds.json")  # change this to your path
+  project = "terraform-demo-449320"
+  region  = "europe-west3" #  europe-west1 - London, europe-west4 - Netherlands
 }
 
-
-
-resource "google_storage_bucket" "data-lake-bucket" {
-  name          = "<Your Unique Bucket Name>"
-  location      = "US"
+resource "google_storage_bucket" "data-lake-demo-bucket" {
+  name          = "terraform-demo-449320-demo-terra-bucket" # it can be any name
+  location      = "EU"
 
   # Optional, but recommended settings:
   storage_class = "STANDARD"
@@ -41,9 +38,6 @@ resource "google_storage_bucket" "data-lake-bucket" {
   force_destroy = true
 }
 
-
-resource "google_bigquery_dataset" "dataset" {
-  dataset_id = "<The Dataset Name You Want to Use>"
-  project    = "<Your Project ID>"
-  location   = "US"
+resource "google_bigquery_dataset" "demo_dataset" {
+  dataset_id = "demo_bigquery_dataset"
 }
